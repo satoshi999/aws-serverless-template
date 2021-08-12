@@ -1,0 +1,6 @@
+version: "3"
+services:
+    dynamo-admin:
+        image: instructure/dynamo-local-admin
+        ports:
+            - "8008:8000"

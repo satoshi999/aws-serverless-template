@@ -1,2 +1,7 @@
 # aws-serverless-template
-aws-serverless-template
+
+## deploy
+
+```
+./sam-cmd/deploy ${stack} ${region} ${stage}
+```

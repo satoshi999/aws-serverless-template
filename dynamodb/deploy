@@ -1,0 +1,10 @@
+if [ "$1" = "local" ]; then
+  ENDPOINT="--endpoint-url http://localhost:8008"
+elif [ "$1" = "dev" ]; then
+  REGION="--region us-east-1"
+elif [ "$1" = "stg" ]; then
+  REGION="--region ap-northeast-1"
+fi
+
+aws dynamodb create-table $ENDPOINT $REGION --cli-input-json file://dynamodb/json/RoomUserChat.json
+aws dynamodb create-table $ENDPOINT $REGION --cli-input-json file://dynamodb/json/Rooms.json

@@ -1,0 +1,31 @@
+STACK_NAME=$1
+REGION=$2
+ENV=$3
+BUCKET_NAME="$STACK_NAME"-"$REGION"-"$ENV"
+
+if [ "$3" = "local" ]; then
+  HOST_IP=$4
+
+  docker-compose up -d
+
+  dir="dynamodb/json/*"
+  for filepath in $dir; do
+    aws dynamodb create-table --endpoint-url http://localhost:8008 --cli-input-json file://"$filepath"
+  done
+
+  sam local start-api --parameter-overrides 'ParameterKey=HOST_IP,ParameterValue='"$HOST_IP"
+
+else
+  dir="dynamodb/json/*"
+  for filepath in $dir; do
+    aws dynamodb create-table --region $REGION --cli-input-json file://"$filepath"
+  done
+
+  aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=$REGION
+  sam build
+  sam validate
+  sam package --output-template-file packaged.yaml --s3-bucket $BUCKET_NAME
+  sam deploy --capabilities CAPABILITY_IAM --template-file packaged.yaml --stack-name $STACK_NAME --region $REGION --parameter-overrides ENV=$ENV
+fi
+
+

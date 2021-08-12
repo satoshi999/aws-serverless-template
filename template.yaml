@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template
+Globals:
+  Function:
+    Timeout: 3
+  Api:
+    Cors: "'*'"
+
+Resources:
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get/
+      Handler: app.lambdaHandler
+      Runtime: nodejs10.x
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            Path: /get
+            Method: get
+      Environment:
+        Variables:
+          ENV: !Ref ENV
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName: "*"
+  ScanFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: scan/
+      Handler: app.lambdaHandler
+      Runtime: nodejs10.x
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            Path: /scan
+            Method: get
+      Environment:
+        Variables:
+          ENV: !Ref ENV
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName: "*"
+  QueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: query/
+      Handler: app.lambdaHandler
+      Runtime: nodejs10.x
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            Path: /query
+            Method: get
+      Environment:
+        Variables:
+          ENV: !Ref ENV
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName: "*"
+  PutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: put/
+      Handler: app.lambdaHandler
+      Runtime: nodejs10.x
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            Path: /put
+            Method: put
+      Environment:
+        Variables:
+          ENV: !Ref ENV
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: "*"
+
+Parameters:
+  ENV:
+    Type: String
+Outputs:
+  GetApi:
+    Description: "API Gateway endpoint URL for Prod stage for Get function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get/"
+  GetFunction:
+    Description: "Get Lambda Function ARN"
+    Value: !GetAtt GetFunction.Arn
+  GetFunctionIamRole:
+    Description: "Implicit IAM Role created for Get function"
+    Value: !GetAtt GetFunctionRole.Arn
+
+  ScanApi:
+    Description: "API Gateway endpoint URL for Prod stage for Scan function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/scan/"
+  ScanFunction:
+    Description: "Scan Lambda Function ARN"
+    Value: !GetAtt GetFunction.Arn
+  ScanFunctionIamRole:
+    Description: "Implicit IAM Role created for Scan function"
+    Value: !GetAtt ScanFunctionRole.Arn
+
+  QueryApi:
+    Description: "API Gateway endpoint URL for Prod stage for Query function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/query/"
+  QueryFunction:
+    Description: "Query Lambda Function ARN"
+    Value: !GetAtt QueryFunction.Arn
+  QueryFunctionIamRole:
+    Description: "Implicit IAM Role created for Query function"
+    Value: !GetAtt QueryFunctionRole.Arn
+
+  PutApi:
+    Description: "API Gateway endpoint URL for Prod stage for Put function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/put/"
+  PutFunction:
+    Description: "Query Lambda Function ARN"
+    Value: !GetAtt PutFunction.Arn
+  PutFunctionIamRole:
+    Description: "Implicit IAM Role created for Put function"
+    Value: !GetAtt PutFunctionRole.Arn
